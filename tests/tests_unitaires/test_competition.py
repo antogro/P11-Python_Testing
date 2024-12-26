@@ -1,55 +1,46 @@
+from server import load_competitions, get_competition, CompetitionNotFound
 import pytest
-import sys
-import os
 import json
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from server import load_competitions, get_competition, CompetitionNotFound
-
-
-def test_load_club_should_return_data(mocker):
-    mock_data = {
-        "competitions": [
-            {
-                "name": "testcompetition",
-                "date": "2020-03-27 10:00:00",
-                "numberOfPlaces": "11"
-            }
-        ]
-    }
-    mocker.patch('json.load', return_value=mock_data)
-    mocker.patch('builtins.open', mocker.mock_open(read_data=json.dumps(mock_data)))
+def test_load_competition_should_return_data(mocker, competition_test):
+    mock_competition_data = {"competitions": [competition_test]}
+    mocker.patch(
+        'json.load', return_value=mock_competition_data
+    )
+    mocker.patch(
+        'builtins.open',
+        mocker.mock_open(
+            read_data=json.dumps(mock_competition_data))
+    )
     result = load_competitions()
-    assert result == mock_data['competitions']
+    assert result == mock_competition_data['competitions']
 
 
-def test_load_club_with_file_not_found(mocker):
+def test_load_competition_with_file_not_found(mocker):
     mocker.patch('builtins.open', side_effect=FileNotFoundError)
     with pytest.raises(FileNotFoundError):
         load_competitions()
 
 
-def test_should_return_competition_with_valid_competition(mocker):
-    mock_response = [
-        {
-            "name": "testcompetition",
-            "date": "2020-03-27 10:00:00",
-            "numberOfPlaces": "11"
-        }
-    ]
-    mocker.patch('server.load_competitions', return_value=mock_response)
-    result = get_competition('testcompetition')
-    expected_value = {
-            "name": "testcompetition",
-            "date": "2020-03-27 10:00:00",
-            "numberOfPlaces": "11"
-        }
-    assert result == expected_value
+def test_get_competition_should_return_competition_with_valid_competition(
+        mocker,
+        competition_test
+):
+    mock_competition_data = [competition_test]
+    mocker.patch('server.competitions', mock_competition_data)
+    result = get_competition(competition_test['name'])
+
+    assert result == competition_test
 
 
-def test_should_raise_CompetitionNotFound_error_with_invalid_competition(mocker):
-    mock_response = []
-    mocker.patch('server.load_competitions', return_value=mock_response)
-    with pytest.raises(CompetitionNotFound, match="Compétition introuvables. Veuillez réessayer."):
+def test_get_competition_should_raise_CompetitionNotFound_error_with_invalid(
+    mocker
+):
+    mock_competition = []
+    mocker.patch('server.competitions', mock_competition)
+    with pytest.raises(
+            CompetitionNotFound,
+            match="Compétition introuvable. Veuillez réessayer."
+    ):
         get_competition('invalidcompetition')
