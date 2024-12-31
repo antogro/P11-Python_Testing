@@ -62,12 +62,13 @@ def test_purchase_place_without_enought_club_point(
         client,
         setup_app_club_low_place
 ):
-    places = 5
+    places = 6
+    print('competition', setup_app_club_low_place.competition[0]['name'], 'club', setup_app_club_low_place.club_test[0]['name'])
     response = client.post(
         '/purchase_places',
         data={
-            'competition': setup_app_club_low_place.competitions[0]['name'],
-            'club': setup_app_club_low_place.club[0]['name'],
+            'competition': setup_app_club_low_place.competition[0]['name'],
+            'club': setup_app_club_low_place.club_test[0]['name'],
             'places': places
             }
     )

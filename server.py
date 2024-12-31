@@ -33,7 +33,6 @@ class EmptyInput(Exception):
         self.message = message
 
 
-
 def load_clubs():
     """
     Charge les clubs à partir d'un fichier JSON.
@@ -141,17 +140,14 @@ def book(competition, club):
         str: Page de réservation ou page d'accueil
     """
     try:
-        found_club = next(
-            (c for c in clubs if c['name'] == club),
-            None
-        )
+        found_club = get_club(club)
         found_competition = get_competition(competition)
         return render_template(
             "booking.html",
             club=found_club,
             competition=found_competition
         )
-    except (EmailNotFound, CompetitionNotFound) as e:
+    except (CompetitionNotFound, NameNotFound) as e:
         return render_template(
             "index.html",
             error=e.message), 404
@@ -161,7 +157,6 @@ def book(competition, club):
 def purchase_places():
     try:
         competition = get_competition(request.form['competition'])
-
         club = get_club(name=request.form['club'])
         placesRequired = int(request.form['places'])
     except (CompetitionNotFound, EmailNotFound) as e:
