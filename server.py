@@ -69,6 +69,8 @@ def get_club(email=None, name=None):
         email(str): Email du club
     Raises:
         EmailNotFound: si aucun club trouvé
+        NameNotFound: si aucun club trouvé
+        EmptyInput: si aucun email de club est fourni
     Returns:
         dict: information du club
     """
@@ -140,7 +142,7 @@ def book(competition, club):
         str: Page de réservation ou page d'accueil
     """
     try:
-        found_club = get_club(club)
+        found_club = get_club(name=club)
         found_competition = get_competition(competition)
         return render_template(
             "booking.html",
@@ -159,21 +161,41 @@ def purchase_places():
         competition = get_competition(request.form['competition'])
         club = get_club(name=request.form['club'])
         placesRequired = int(request.form['places'])
-    except (CompetitionNotFound, EmailNotFound) as e:
+    except (CompetitionNotFound, NameNotFound) as e:
         return render_template('index.html', error=e.message), 400
-
-    if placesRequired > int(competition['numberOfPlaces']):
-        flash('Vous ne pouvez reserver plus que place que celle disponible.')
+    errors = data_validation(competition, club, placesRequired)
+    if errors:
+        for error in errors:
+            flash(error, 'error')
         return render_template(
-            'welcome.html',
-            club=club,
-            competitions=competitions
-            ), 400
+            'booking.html',
+            competition=competition,
+            club=club
+        ), 400
 
-    competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
-    flash('Reservation Confirme')
-    return render_template('welcome.html', club=club, competitions=competitions)
+    competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
+    club['points'] = int(club['points']) - placesRequired
+    flash('Réservation confirmée !')
+    return render_template(
+        'welcome.html',
+        club=club,
+        competitions=competitions
+    )
 
+
+def data_validation(competition, club, placesRequired):
+    """Valide les données pour l'achat de places."""
+    errors = []
+    if placesRequired > int(competition['numberOfPlaces']):
+        errors.append('Vous ne pouvez réserver plus de places que celles disponibles.')
+
+    if placesRequired > 12:
+        errors.append('Vous ne pouvez réserver plus de 12 places sur une compétition.')
+
+    if placesRequired > int(club['points']):
+        errors.append('Vous ne pouvez réserver plus de places que vos points disponibles.')
+
+    return errors
 
 # TODO: Add route for points display
 

@@ -30,6 +30,15 @@ def competition():
 
 
 @pytest.fixture
+def competition_more_than_12_place():
+    return {
+        "name": "Spring Festival",
+        "date": "2020-03-27 10:00:00",
+        "numberOfPlaces": "25"
+    }
+
+
+@pytest.fixture
 def club():
     return {
         "name": "She Lifts",
@@ -83,9 +92,16 @@ def setup_app_test(competition_test, club_test):
 
 
 @pytest.fixture
+def setup_app_competition_more_place(competition_more_than_12_place, club):
+    app.competition = [competition_more_than_12_place]
+    app.club = [club]
+    yield app
+
+
+@pytest.fixture
 def setup_app(competition, club):
     app.competition = [competition]
-    app.club_test = [club]
+    app.club = [club]
     yield app
 
 

@@ -13,18 +13,25 @@
     {% endif%}
 {% endwith %}
     <h2>{{ competition['name'] }}</h2>
-    Places available: {{ competition['numberOfPlaces'] }}
+    <p>Places disponibles: {{ competition['numberOfPlaces'] }}</p>
+    <p>Points de club disponibles: {{club['points']}}</p>
+    
     {% if competition['numberOfPlaces']|int > 0 %}
-        <p>{{club['points']}}</p>
-
     <form action="/purchase_places" method="post">
         <input type="hidden" name="club" value="{{club['name']}}">
         <input type="hidden" name="competition" value="{{competition['name']}}">
-        <label for="places">How many places?</label><input type="number" name="places" id=""/>
+        <label for="places">How many places?</label>
+        <input type="number"
+            name="places"
+            id=""
+            min="1"
+            max="{{ [12, competition['numberOfPlaces']|int, club['points']|int]|min }}"
+            required
+        />
         <button type="submit">Book</button>
     </form>
     {% else %}
-    <p>Sorry, no places available.</p>
+    <p>Pas de place disponible.</p>
     {% endif %}
 
 {% endblock content %}
