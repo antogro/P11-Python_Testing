@@ -1,26 +1,24 @@
 import server
 
 
-def test_show_summary_valide_email(mocker, client, club_test):
-    mocker.patch('server.get_club', return_value=club_test)
-    data = {"email": club_test['email']}
-    response = client.post('/show_summary', data=data)
+def test_show_summary_valide_email(mocker, client, base_club):
+    mocker.patch('server.get_club', return_value=base_club)
+    response = client.post('/show_summary', data={'email': base_club['email']})
 
     decoded_response = response.data.decode('utf-8')
 
     assert response.status_code == 200
-    assert f'Welcome, {club_test["email"]}' in decoded_response
+    assert f'Welcome, {base_club["email"]}' in decoded_response
 
 
-def test_show_summary_invalide_email(mocker, client, club_test):
+def test_show_summary_invalide_email(mocker, client, base_club):
     mocker.patch(
         'server.get_club',
         side_effect=server.EmailNotFound(
             "Club introuvable. Veuillez reessayer."
             )
     )
-    data = {"email": "invalide_email@mail.co"}
-    response = client.post('/show_summary', data=data)
+    response = client.post('/show_summary', data={'email': base_club['email']})
 
     decoded_response = response.data.decode('utf-8')
 

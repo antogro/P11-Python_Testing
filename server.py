@@ -7,6 +7,7 @@ from flask import (
     flash,
     url_for
 )
+from datetime import datetime
 
 
 class EmailNotFound(Exception):
@@ -60,6 +61,7 @@ app.secret_key = "something_special"
 
 competitions = load_competitions()
 clubs = load_clubs()
+current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def get_club(email=None, name=None):
@@ -123,7 +125,8 @@ def show_summary():
         return render_template(
             "welcome.html",
             club=club,
-            competitions=competitions
+            competitions=competitions,
+            current_time=current_time
         )
     except (EmailNotFound, EmptyInput) as e:
         return render_template('index.html', error=e.message), 404
@@ -147,7 +150,8 @@ def book(competition, club):
         return render_template(
             "booking.html",
             club=found_club,
-            competition=found_competition
+            competition=found_competition,
+            current_time=current_time
         )
     except (CompetitionNotFound, NameNotFound) as e:
         return render_template(
@@ -161,7 +165,7 @@ def purchase_places():
         competition = get_competition(request.form['competition'])
         club = get_club(name=request.form['club'])
         placesRequired = int(request.form['places'])
-    except (CompetitionNotFound, NameNotFound) as e:
+    except (CompetitionNotFound, NameNotFound, ValueError) as e:
         return render_template('index.html', error=e.message), 400
     errors = data_validation(competition, club, placesRequired)
     if errors:
@@ -170,7 +174,8 @@ def purchase_places():
         return render_template(
             'booking.html',
             competition=competition,
-            club=club
+            club=club,
+            current_time=current_time
         ), 400
 
     competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
@@ -179,21 +184,40 @@ def purchase_places():
     return render_template(
         'welcome.html',
         club=club,
-        competitions=competitions
+        competitions=competitions,
+        current_time=current_time
     )
 
 
 def data_validation(competition, club, placesRequired):
     """Valide les données pour l'achat de places."""
     errors = []
+    competition_date = datetime.strptime(
+        competition['date'], '%Y-%m-%d %H:%M:%S'
+    )
+    if competition_date < datetime.now():
+        errors.append(
+            'Vous ne pouvez réserver des places pour des compétitions passée.'
+        )
+
     if placesRequired > int(competition['numberOfPlaces']):
-        errors.append('Vous ne pouvez réserver plus de places que celles disponibles.')
+        errors.append(
+            'Vous ne pouvez réserver plus de places que celles disponibles.'
+        )
 
     if placesRequired > 12:
-        errors.append('Vous ne pouvez réserver plus de 12 places sur une compétition.')
+        errors.append(
+            'Vous ne pouvez réserver plus de 12 places sur une compétition.'
+        )
 
     if placesRequired > int(club['points']):
-        errors.append('Vous ne pouvez réserver plus de places que vos points disponibles.')
+        errors.append(
+            'Vous ne pouvez réserver plus de places que vos points disponibles.'
+        )
+    if placesRequired < 0:
+        errors.append(
+            'Vous ne pouvez réserver 0 places.'
+        )
 
     return errors
 

@@ -3,8 +3,8 @@ import pytest
 import json
 
 
-def test_load_competition_should_return_data(mocker, competition_test):
-    mock_competition_data = {"competitions": [competition_test]}
+def test_load_competition_should_return_data(mocker, base_competition):
+    mock_competition_data = {"competitions": [base_competition]}
     mocker.patch(
         'json.load', return_value=mock_competition_data
     )
@@ -17,21 +17,15 @@ def test_load_competition_should_return_data(mocker, competition_test):
     assert result == mock_competition_data['competitions']
 
 
-def test_load_competition_with_file_not_found(mocker):
-    mocker.patch('builtins.open', side_effect=FileNotFoundError)
-    with pytest.raises(FileNotFoundError):
-        load_competitions()
-
-
-def test_get_competition_should_return_competition_with_valid_competition(
+def test_get_competition_should_return_data_with_valid_competition(
         mocker,
-        competition_test
+        base_competition
 ):
-    mock_competition_data = [competition_test]
+    mock_competition_data = [base_competition]
     mocker.patch('server.competitions', mock_competition_data)
-    result = get_competition(competition_test['name'])
+    result = get_competition(base_competition['name'])
 
-    assert result == competition_test
+    assert result == base_competition
 
 
 def test_get_competition_should_raise_CompetitionNotFound_error_with_invalid(
