@@ -7,106 +7,65 @@ sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 )
 
-from server import load_competitions, load_clubs, app
+from server import app
+from datetime import datetime, timedelta
+
+
+@pytest.fixture
+def base_competition():
+    """Fixture de base pour une compétition valide dans le future."""
+    return {
+        "name": "competition test",
+        "date": (
+            datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S'),
+        "numberOfPlaces": 15
+    }
+
+
+@pytest.fixture
+def base_club():
+    """Fixture de base pour un club valide."""
+    return {
+        "email": "test@club.co",
+        "name": "Club test",
+        "points": 15,
+    }
+
+
+@pytest.fixture
+def make_competition(base_competition):
+    """Fixture pour créer une compétition."""
+    def _make_competition(**kwargs):
+        competition = base_competition.copy()
+        competition.update(kwargs)
+        return competition
+    return _make_competition
+
+
+@pytest.fixture
+def make_club(base_club):
+    """Fixture pour créer un club."""
+    def _make_club(**kwargs):
+        club = base_club.copy()
+        club.update(kwargs)
+        return club
+    return _make_club
 
 
 @pytest.fixture
 def client():
-    app.config['testing'] = True
+    """Fixture pour le client de test Flask"""
+    app.config["TESTING"] = True
     app.secret_key = 'something_special'
-    app.club = load_clubs()
-    app.competitions = load_competitions()
     with app.test_client() as client:
         yield client
 
 
 @pytest.fixture
-def competition():
-    return {
-        "name": "Fall Classic",
-        "date": "2020-10-22 13:30:00",
-        "numberOfPlaces": "13"
-    }
-
-
-@pytest.fixture
-def competition_more_than_12_place():
-    return {
-        "name": "Spring Festival",
-        "date": "2020-03-27 10:00:00",
-        "numberOfPlaces": "25"
-    }
-
-
-@pytest.fixture
-def club():
-    return {
-        "name": "She Lifts",
-        "email": "kate@shelifts.co.uk",
-        "points": "12"
-    }
-
-
-@pytest.fixture
-def club_low_place():
-    return {
-        "name": "Iron Temple",
-        "email": "admin@irontemple.com",
-        "points": "4"
-    }
-
-
-@pytest.fixture
-def competition_test():
-    return {
-        "name": "competition test",
-        "date": "2020-10-22 13:30:00",
-        "numberOfPlaces": "13"
-    }
-
-
-@pytest.fixture
-def club_test():
-    return {
-        "name": "Club test",
-        "email": "test@test.co.uk",
-        "points": "12"
-    }
-
-
-@pytest.fixture
-def places():
-    return 5
-
-
-@pytest.fixture
-def data(competition, club, places):
-    return competition, club, places
-
-
-@pytest.fixture
-def setup_app_test(competition_test, club_test):
-    app.competition = [competition_test]
-    app.club_test = [club_test]
-    yield app
-
-
-@pytest.fixture
-def setup_app_competition_more_place(competition_more_than_12_place, club):
-    app.competition = [competition_more_than_12_place]
-    app.club = [club]
-    yield app
-
-
-@pytest.fixture
-def setup_app(competition, club):
-    app.competition = [competition]
-    app.club = [club]
-    yield app
-
-
-@pytest.fixture
-def setup_app_club_low_place(competition, club_low_place):
-    app.competition = [competition]
-    app.club_test = [club_low_place]
-    yield app
+def app_with_data(client):
+    """Fixture pour configurer l'app avec les données de test"""
+    def _configure_app(competition, club):
+        app.competition = [competition]
+        app.club = [club]
+        return app
+    return _configure_app

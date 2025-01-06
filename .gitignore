@@ -5,3 +5,4 @@ lib
 .envrc
 .venv
 __pycache__
+.vscode
