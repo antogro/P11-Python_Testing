@@ -4,7 +4,8 @@
 
 {% block content %}
     <h1>Welcome to the GUDLFT Registration Portal!</h1>
-
+    <a href="{{ url_for('display_points') }}">Points des clubs</a>
+    </br>
     Please enter your secretary email to continue:
     <form action="show_summary" method="post">
         <label for="email">Email:</label>
