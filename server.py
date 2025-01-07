@@ -161,6 +161,18 @@ def book(competition, club):
 
 @app.route('/purchase_places', methods=['POST'])
 def purchase_places():
+    """
+    Traite l'achat de places pour une compétition par un club.
+
+    Args:
+        competition (str): Nom de la compétition
+        club (str): Nom du club
+        places (str): Nombre de places à réserver
+
+    Retourne:
+        str: Page de bienvenue rendue avec message flash en cas de succès,
+             ou page de réservation avec messages d'erreur en cas d'échec.
+    """
     try:
         competition = get_competition(request.form['competition'])
         club = get_club(name=request.form['club'])
@@ -178,7 +190,9 @@ def purchase_places():
             current_time=current_time
         ), 400
 
-    competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
+    competition['numberOfPlaces'] = (
+        int(competition['numberOfPlaces']) - placesRequired
+    )
     club['points'] = int(club['points']) - placesRequired
     flash('Réservation confirmée !')
     return render_template(
@@ -190,7 +204,21 @@ def purchase_places():
 
 
 def data_validation(competition, club, placesRequired):
-    """Valide les données pour l'achat de places."""
+    """
+    Valide les données de réservation de places pour une compétition.
+
+    Cette fonction vérifie si le nombre de places demandées est valide en fonction
+    des règles de l'application (nombre de places disponibles, points du club, etc.).
+
+    Args:
+        competition (dict): Dictionnaire contenant les informations de la compétition.
+        club (dict): Dictionnaire contenant les informations du club.
+        placesRequired (int): Nombre de places demandées.
+
+    Retourne:
+        list: Liste de messages d'erreur s'il y a des erreurs de validation,
+              liste vide si la validation est réussie.
+    """
     errors = []
     competition_date = datetime.strptime(
         competition['date'], '%Y-%m-%d %H:%M:%S'
@@ -221,7 +249,14 @@ def data_validation(competition, club, placesRequired):
 
     return errors
 
-# TODO: Add route for points display
+
+@app.route("/clubs_points")
+def display_points():
+    """Affiche les points des clubs"""
+    return render_template(
+        'clubs_points.html',
+        clubs=clubs
+    )
 
 
 @app.route("/logout")
