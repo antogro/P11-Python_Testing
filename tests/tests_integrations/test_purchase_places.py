@@ -8,6 +8,9 @@ def test_purchase_place_with_valide_data(
         app_with_data,
         client
 ):
+    """
+    Teste l'achat de places pour une compétition par un club.
+    """
     competition = make_competition()
     club = make_club()
     app_with_data(competition, club)
@@ -32,6 +35,9 @@ def test_purchase_place_with_valide_data(
 
 
 def test_purchase_place_with_invalide_competition(client, base_club, mocker):
+    """
+    Teste l'achat de places pour une compétition inexistante.
+    """
     competition = {'name': 'Invalid competition'}
     mocker.patch(
         'server.get_club',
@@ -55,6 +61,9 @@ def test_purchase_place_with_invalide_club(
         base_competition,
         mocker
 ):
+    """
+    Teste l'achat de places pour un club inexistant.
+    """
     club = {'name': 'Invalid club'}
     mocker.patch('server.get_competition', return_value=base_competition)
     places = 4
@@ -77,6 +86,10 @@ def test_purchase_place_with_to_more_place_than_competition_places(
         app_with_data,
         client
 ):
+    """
+    Teste l'achat de places pour une compétition avec plus de places que
+    celles disponibles.
+    """
     competition = make_competition(numberOfPlaces="10")
     club = make_club()
     app_with_data(competition, club)
@@ -110,6 +123,9 @@ def test_purchase_place_with_more_than_12_places(
         app_with_data,
         client
 ):
+    """
+    Teste l'achat de places pour une compétition avec plus de 12 places.
+    """
     competition = make_competition()
     club = make_club()
     app_with_data(competition, club)
@@ -145,6 +161,10 @@ def test_purchase_place_with_insufficient_club_points(
         app_with_data,
         client
 ):
+    """
+    Teste l'achat de places pour une compétition avec des points insuffisants
+    pour le club.
+    """
     competition = make_competition()
     club = make_club(points=5)
     app_with_data(competition, club)
@@ -156,7 +176,7 @@ def test_purchase_place_with_insufficient_club_points(
         'server.get_club',
         return_value=club
     )
-    places = 6  # Plus que les points disponibles du club
+    places = 6
     response = client.post(
         '/purchase_places',
         data={
@@ -180,6 +200,9 @@ def test_points_deduction_after_purchase(
         app_with_data,
         client
 ):
+    """
+    Teste la déduction des points après l'achat de places pour une compétition.
+    """
     competition = make_competition()
     club = make_club()
     app_with_data(competition, club)
@@ -212,6 +235,9 @@ def test_purchase_place_with_past_competition(
         app_with_data,
         client
 ):
+    """
+    Teste l'achat de places pour une compétition passée.
+    """
     competition = make_competition(date=(
         datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
     )

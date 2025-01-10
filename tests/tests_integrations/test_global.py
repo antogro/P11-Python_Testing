@@ -19,8 +19,8 @@ def competitions():
     return load_competitions()
 
 
-    # Test show_summary
 def test_user_flow(client, clubs, competitions):
+    # Test show_summary
     response = client.post('/show_summary', data=dict(email=clubs[0]['email']))
     assert response.status_code == 200
     assert f'Welcome, {clubs[0]["email"]}' in response.data.decode('utf-8')

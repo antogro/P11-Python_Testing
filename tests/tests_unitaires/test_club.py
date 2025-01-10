@@ -13,6 +13,7 @@ def test_get_club_email_should_return_club_with_valide_data(
     mocker,
     base_club,
 ):
+    """Test get_club avec un email valide"""
     mock_clubs = [base_club]
     mocker.patch("server.clubs", mock_clubs)
     result = get_club(email=base_club["email"])
@@ -24,6 +25,7 @@ def test_get_club_name_should_return_club_with_valide_data(
     mocker,
     base_club,
 ):
+    """Test get_club avec un nom valide"""
     mock_clubs = [base_club]
     mocker.patch("server.clubs", mock_clubs)
     result = get_club(name=base_club["name"])
@@ -31,6 +33,7 @@ def test_get_club_name_should_return_club_with_valide_data(
 
 
 def test_get_club_should_return_EmptyInput_error_with_no_input(mocker):
+    """Test get_club avec aucune donnée"""
     mocker.patch("server.load_clubs", return_value=[])
     with pytest.raises(EmptyInput, match="Veuillez remplir le formulaire."):
         get_club()
@@ -40,6 +43,7 @@ def test_get_club_email_should_raise_error_with_invalide_data(
         mocker,
         base_club
 ):
+    """Test get_club avec un email invalide"""
     mocker.patch("server.load_clubs", return_value=[])
     with pytest.raises(
         EmailNotFound, match="Email du Club introuvable. Veuillez reessayer."
@@ -51,6 +55,7 @@ def test_get_club_name_should_raise_error_with_invalide_data(
         mocker,
         base_club
 ):
+    """Test get_club avec un nom invalide"""
     mocker.patch("server.load_clubs", return_value=[])
     with pytest.raises(
         NameNotFound, match="Nom du Club introuvable. Veuillez reessayer."
@@ -59,6 +64,7 @@ def test_get_club_name_should_raise_error_with_invalide_data(
 
 
 def test_load_club_should_return_data(mocker, base_club):
+    """Test le chargement des données de club provenant du JSON  ."""
     mock_club_data = {"clubs": [base_club]}
     mocker.patch("json.load", return_value=mock_club_data)
     mocker.patch(

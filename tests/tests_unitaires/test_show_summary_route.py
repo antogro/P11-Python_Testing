@@ -2,6 +2,7 @@ import server
 
 
 def test_show_summary_valide_email(mocker, client, base_club):
+    """Test la route show_summary avec un email valide."""
     mocker.patch('server.get_club', return_value=base_club)
     response = client.post('/show_summary', data={'email': base_club['email']})
 
@@ -12,6 +13,7 @@ def test_show_summary_valide_email(mocker, client, base_club):
 
 
 def test_show_summary_invalide_email(mocker, client, base_club):
+    """Test la route show_summary avec un email invalide."""
     mocker.patch(
         'server.get_club',
         side_effect=server.EmailNotFound(
@@ -27,6 +29,7 @@ def test_show_summary_invalide_email(mocker, client, base_club):
 
 
 def test_show_summary_with_no_email(mocker, client):
+    """Test la route show_summary avec aucun email."""
     mocker.patch(
         'server.get_club',
         side_effect=server.EmptyInput(
