@@ -8,6 +8,7 @@ def test_data_validation_with_valid_data(
         make_club,
         app_with_data
 ):
+    """Test data_validation avec des données valide."""
     competition = make_competition()
     club = make_club()
     app_with_data(competition, club)
@@ -35,6 +36,7 @@ def test_data_validation_with_more_places_than_available(
         make_club,
         app_with_data
 ):
+    """Test data_validation avec plus de places que celles disponibles."""
     competition = make_competition(numberOfPlaces="10")
     club = make_club()
     app_with_data(competition, club)
@@ -61,6 +63,7 @@ def test_data_validation_with_past_competition(
         make_club,
         app_with_data
 ):
+    """Test data_validation avec une compétition passée."""
     plast_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
     competition = make_competition(date=plast_date)
     club = make_club()
@@ -89,6 +92,7 @@ def test_data_validation_with_more_places_than_club_points(
         make_club,
         app_with_data
 ):
+    """Test data_validation avec plus de places que les points du club."""
     competition = make_competition()
     club = make_club(points=5)
     app_with_data(competition, club)
@@ -116,6 +120,7 @@ def test_data_validation_with_negative_places(
         make_club,
         app_with_data
 ):
+    """Test data_validation avec un nombre de places négatif."""
     competition = make_competition(numberOfPlaces="10")
     club = make_club()
     app_with_data(competition, club)
@@ -144,6 +149,7 @@ def test_data_validation_with_more_than_12_places(
         make_club,
         app_with_data
 ):
+    """Test data_validation avec plus de 12 places."""
     competition = make_competition()
     club = make_club()
     app_with_data(competition, club)

@@ -207,11 +207,13 @@ def data_validation(competition, club, placesRequired):
     """
     Valide les données de réservation de places pour une compétition.
 
-    Cette fonction vérifie si le nombre de places demandées est valide en fonction
-    des règles de l'application (nombre de places disponibles, points du club, etc.).
+    Cette fonction vérifie si le nombre de places demandées est valide en
+    fonction des règles de l'application
+    (nombre de places disponibles, points du club, etc.).
 
     Args:
-        competition (dict): Dictionnaire contenant les informations de la compétition.
+        competition (dict): Dictionnaire contenant les informations de la
+                            compétition.
         club (dict): Dictionnaire contenant les informations du club.
         placesRequired (int): Nombre de places demandées.
 
@@ -242,7 +244,7 @@ def data_validation(competition, club, placesRequired):
         errors.append(
             'Vous ne pouvez réserver plus de places que vos points disponibles.'
         )
-    if placesRequired < 0:
+    if placesRequired <= 0:
         errors.append(
             'Vous ne pouvez réserver 0 places.'
         )
@@ -262,3 +264,11 @@ def display_points():
 @app.route("/logout")
 def logout():
     return redirect(url_for("index"))
+
+
+@app.route('/reset_data', methods=['GET'])
+def reset_data():
+    global competitions, clubs
+    competitions = load_competitions()
+    clubs = load_clubs()
+    return "Data reset", 200

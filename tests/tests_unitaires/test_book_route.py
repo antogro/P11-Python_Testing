@@ -39,9 +39,7 @@ def test_book_invalid_club(
         app_with_data,
         client
 ):
-    """
-    Teste le cas où le club est invalide.
-    """
+    """Teste le cas où le club est invalide."""
     competition = make_competition()
     club = {"name": "InvalidClub"}
     app_with_data(competition, club)
@@ -69,9 +67,7 @@ def test_book_invalid_competition(
         app_with_data,
         client
 ):
-    """
-    Teste le cas où la compétition est invalide.
-    """
+    """Teste le cas où la compétition est invalide."""
     competition = {"name": "InvalidClub"}
     club = make_club()
     app_with_data(competition, club)

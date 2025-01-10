@@ -14,7 +14,7 @@
     * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 
         Whereas Django does a lot of things for us out of the box, Flask allows us to add only what we need. 
-     
+
 
     * [Virtual environment](https://virtualenv.pypa.io/en/stable/installation.html)
 
@@ -43,9 +43,18 @@
     * clubs.json - list of clubs with relevant information. You can look here to see what email addresses the app will accept for login.
 
 5. Testing
+    To start testing, run pytest 
+    <code>pytest -vv</code>
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
-
-    We also like to show how well we're testing, so there's a module called 
+6. Coverage
+    We also like to show how well we're testing, so there's a module called
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
+    Installation and rune the coverage module.
 
+    To run the coverage, type:
+        <code>pytest --cov=.</code>
+    and to get the HTML report, type:
+        <code>pytest --cov=. --cov-report html</code>
+
+    This will show you how much of your code is covered by tests.
+    
