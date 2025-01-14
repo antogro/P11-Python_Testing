@@ -32,6 +32,7 @@ def test_purchase_place_with_valide_data(
 
     assert response.status_code == 200
     assert 'Réservation confirmée !' in decoded_response
+    assert 'Points available: 11' in decoded_response
 
 
 def test_purchase_place_with_invalide_competition(client, base_club, mocker):

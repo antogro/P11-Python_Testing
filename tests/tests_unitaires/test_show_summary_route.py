@@ -17,7 +17,7 @@ def test_show_summary_invalide_email(mocker, client, base_club):
     mocker.patch(
         'server.get_club',
         side_effect=server.EmailNotFound(
-            "Club introuvable. Veuillez reessayer."
+            "Email du Club introuvable. Veuillez reessayer."
             )
     )
     response = client.post('/show_summary', data={'email': base_club['email']})
@@ -25,7 +25,7 @@ def test_show_summary_invalide_email(mocker, client, base_club):
     decoded_response = response.data.decode('utf-8')
 
     assert response.status_code == 404
-    assert 'Club introuvable. Veuillez reessayer.' in decoded_response
+    assert 'Email du Club introuvable. Veuillez reessayer.' in decoded_response
 
 
 def test_show_summary_with_no_email(mocker, client):

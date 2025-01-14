@@ -26,7 +26,8 @@ def test_user_flow(client, clubs, competitions):
     assert f'Welcome, {clubs[0]["email"]}' in response.data.decode('utf-8')
 
     # Test book
-    response = client.get(f"/book/{competitions[2]['name']}/{clubs[0]['name']}")
+    response = client.get(
+        f"/book/{competitions[2]['name']}/{clubs[0]['name']}")
     assert response.status_code == 200
     assert f'{competitions[2]['name']}' in response.data.decode("utf-8")
 
